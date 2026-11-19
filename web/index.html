@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<script>/* Penjaga akses: wajib login lewat ../index.html */
+try { const a = JSON.parse(localStorage.getItem('rentgo_auth')); if (!a || a.role !== 'user') location.replace('../index.html'); } catch (e) { location.replace('../index.html'); }</script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>RentGo – Rental Mobil, Motor &amp; Travel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<script>
+tailwind.config = { theme: { extend: {
+  fontFamily: { sans: ['Plus Jakarta Sans', 'system-ui', 'sans-serif'] },
+  colors: { brand: { 50:'#eff6ff', 100:'#dbeafe', 200:'#bfdbfe', 500:'#3b82f6', 600:'#2563eb', 700:'#1d4ed8', 900:'#1e3a8a' } }
+}}};
+</script>
+<style type="text/tailwindcss">
+  :root { box-sizing: border-box; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+  body { @apply bg-brand-50 text-slate-700 font-sans antialiased; background-image: radial-gradient(60rem 30rem at 50% -10%, #dbeafe 0%, transparent 70%); }
+  .card  { @apply bg-white rounded-2xl border border-brand-100 shadow-[0_10px_30px_-14px_rgba(37,99,235,.28)]; }
+  .btn   { @apply w-full inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-brand-700 to-brand-500 text-white font-semibold py-3.5 shadow-lg shadow-brand-600/25 transition hover:brightness-110 active:scale-[.98]; }
+  .btn-o { @apply w-full inline-flex items-center justify-center rounded-xl border border-brand-600 bg-white text-brand-700 font-semibold py-3 transition hover:bg-brand-50; }
+  .field { @apply w-full rounded-xl border border-brand-100 bg-brand-50/60 px-3.5 py-3 text-sm text-slate-800 outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30; }
+  .lbl   { @apply block text-xs font-medium text-slate-500 mb-1.5; }
+  .chip  { @apply px-4 py-2 rounded-full text-sm font-semibold bg-white border border-brand-100 text-slate-600 transition whitespace-nowrap; }
+  .chip.on { @apply bg-brand-600 border-brand-600 text-white shadow-md shadow-brand-600/25; }
+  .h2    { @apply text-base font-bold text-brand-900 mb-3; }
+  .nav-i { @apply flex flex-col items-center gap-1 text-[11px] font-medium text-slate-400 transition; }
+  .nav-i.on { @apply text-brand-600; }
+  .view  { animation: in .25s ease-out; }
+  @keyframes in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { .view { animation: none; } }
+</style>
+</head>
+
+<body class="min-h-screen">
+
+<!-- ============ LOGIN ============ -->
+<main id="auth" class="hidden fixed inset-0 z-50 overflow-y-auto bg-brand-50 grid lg:grid-cols-2">
+  <button onclick="closeAuth()" aria-label="Tutup" class="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-white border border-brand-100 text-slate-500 grid place-items-center shadow-sm hover:text-brand-700">✕</button>
+  <section class="relative hidden lg:flex flex-col justify-between p-12 text-white bg-gradient-to-br from-brand-900 via-brand-700 to-brand-500 overflow-hidden">
+    <div class="text-3xl font-extrabold tracking-tight">RentGo</div>
+    <div class="relative z-10 max-w-md">
+      <h1 class="text-4xl font-extrabold leading-tight">Perjalanan nyaman bersama kami.</h1>
+      <p class="mt-4 text-brand-100">Rental mobil, motor, dan travel keluarga. Aman, terpercaya, dan hemat.</p>
+    </div>
+    <div class="absolute -right-10 bottom-6 w-[34rem] opacity-95" id="authArt"></div>
+  </section>
+
+  <section class="flex items-center justify-center p-6">
+    <div class="w-full max-w-sm">
+      <div class="lg:hidden mb-8 text-center"><div class="text-3xl font-extrabold text-brand-700">RentGo</div><p class="text-sm text-slate-500">Rental Mobil &amp; Motor · Travel Keluarga</p></div>
+      <h2 id="authTitle" class="text-2xl font-extrabold text-brand-900">Masuk ke akun</h2>
+      <p id="authSub" class="text-sm text-slate-500 mt-1 mb-6">Lanjutkan untuk memesan kendaraan.</p>
+      <form id="authForm" class="space-y-4" novalidate>
+        <div id="nameWrap" class="hidden"><label class="lbl" for="aName">Nama lengkap</label><input id="aName" class="field" autocomplete="name" placeholder="Nama Anda"></div>
+        <div><label class="lbl" for="aEmail">Email</label><input id="aEmail" type="email" class="field" autocomplete="email" placeholder="nama@email.com"></div>
+        <div><label class="lbl" for="aPass">Kata sandi</label>
+          <div class="relative"><input id="aPass" type="password" class="field pr-16" autocomplete="current-password" placeholder="Minimal 6 karakter">
+          <button type="button" id="togglePass" class="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-semibold text-brand-600">Lihat</button></div></div>
+        <p id="authErr" class="hidden text-sm text-red-600 bg-red-50 border border-red-100 rounded-lg px-3 py-2"></p>
+        <button class="btn" id="authBtn">Masuk</button>
+      </form>
+      <button id="fillDemo" class="btn-o mt-3 text-sm">Gunakan akun demo</button>
+      <p class="text-sm text-center text-slate-500 mt-6"><span id="swapText">Belum punya akun?</span> <button id="swapAuth" class="font-semibold text-brand-600">Daftar</button></p>
+    </div>
+  </section>
+</main>
+
+<!-- ============ APP ============ -->
+<div id="app" class="min-h-screen flex flex-col">
+  <header class="sticky top-0 z-30 bg-white/80 backdrop-blur border-b border-brand-100">
+    <div class="max-w-6xl mx-auto px-5 h-16 flex items-center justify-between">
+      <button onclick="nav('home')" class="text-xl font-extrabold text-brand-700">RentGo</button>
+      <nav id="topNav" class="hidden lg:flex items-center gap-1 text-sm font-semibold"></nav>
+      <div id="userBox" class="flex items-center gap-2"></div>
+    </div>
+  </header>
+  <main id="view" class="flex-1 w-full max-w-6xl mx-auto px-5 py-6"></main>
+  <footer class="mt-16 bg-brand-900 text-brand-100">
+    <div class="max-w-6xl mx-auto px-5 pt-14 pb-28 lg:pb-10">
+      <div class="grid gap-10 md:grid-cols-3">
+        <div><div class="text-2xl font-extrabold text-white">RentGo</div><p class="mt-3 text-sm leading-relaxed max-w-xs">Rental mobil, motor, dan travel keluarga di Yogyakarta. Aman, terpercaya, dan hemat.</p></div>
+        <div><h3 class="font-semibold text-white">Menu</h3><ul class="mt-3 space-y-2 text-sm">
+          <li><button onclick="nav('vehicles')" class="hover:text-white">Armada</button></li>
+          <li><button onclick="nav('travel')" class="hover:text-white">Travel Keluarga</button></li>
+          <li><button onclick="nav('orders')" class="hover:text-white">Pesanan Saya</button></li></ul></div>
+        <div><h3 class="font-semibold text-white">Hubungi kami</h3><ul class="mt-3 space-y-2 text-sm">
+          <li><a href="https://wa.me/6281234567890" target="_blank" rel="noopener" class="hover:text-white">WhatsApp: 0812-3456-7890</a></li>
+          <li>Email: halo@rentgo.id</li><li>Layanan 24 jam, setiap hari</li></ul></div>
+      </div>
+      <p class="mt-12 border-t border-white/10 pt-6 text-xs text-brand-200">© 2026 RentGo. Seluruh hak dilindungi.</p>
+    </div>
+  </footer>
+  <nav id="botNav" class="lg:hidden fixed bottom-0 inset-x-0 z-30 bg-white/95 backdrop-blur border-t border-brand-100 px-4 pt-2 pb-[calc(.5rem+env(safe-area-inset-bottom,0px))] grid grid-cols-5"></nav>
+</div>
+<div id="toast" class="fixed left-1/2 -translate-x-1/2 bottom-24 lg:bottom-8 z-50 hidden rounded-full bg-brand-900 text-white text-sm px-5 py-2.5 shadow-xl"></div>
+
+<script src="js/utils.js"></script>
+<script src="js/data.js"></script>
+<script src="js/icons.js"></script>
+<script src="js/state.js"></script>
+<script src="js/components.js"></script>
+<script src="js/router.js"></script>
+<script src="js/views/home.js"></script>
+<script src="js/views/vehicles.js"></script>
+<script src="js/views/detail.js"></script>
+<script src="js/views/booking.js"></script>
+<script src="js/views/travel.js"></script>
+<script src="js/views/payment.js"></script>
+<script src="js/views/success.js"></script>
+<script src="js/views/orders.js"></script>
+<script src="js/views/profile.js"></script>
+<script src="js/actions.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/main.js"></script>
+
+</body>
+</html>

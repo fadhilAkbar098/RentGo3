@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>RentGo – Dashboard Keuangan</title>
+  <!-- Tailwind CSS (CDN) – butuh internet saat dibuka -->
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+</head>
+<body class="bg-slate-950 text-slate-200 text-sm min-h-screen font-sans">
+
+  <!-- Halaman login / daftar (isi dibuat app.js) -->
+  <div id="auth" class="hidden min-h-screen items-center justify-center p-5"></div>
+
+  <!-- Aplikasi -->
+  <div id="app" class="hidden">
+    <aside id="side" class="fixed inset-y-0 left-0 w-60 bg-slate-900 border-r border-slate-800 p-4 flex flex-col z-30
+                            -translate-x-full lg:translate-x-0 transition-transform"></aside>
+
+    <div class="lg:ml-60 min-h-screen">
+      <header class="h-16 border-b border-slate-800 flex items-center gap-4 px-4 lg:px-6">
+        <button class="lg:hidden text-xl" onclick="document.getElementById('side').classList.toggle('-translate-x-full')">☰</button>
+
+        <div class="flex-1 max-w-md flex items-center gap-2 bg-slate-900 border border-slate-800 rounded-md px-3 h-10 text-slate-400">
+          <span id="si"></span>
+          <input id="q" placeholder="Cari booking, pelanggan, atau kendaraan"
+                 class="flex-1 min-w-0 bg-transparent outline-none text-slate-200 placeholder:text-slate-500"
+                 oninput="S.q=this.value;S.view='booking';render()">
+        </div>
+
+        <div class="ml-auto relative text-slate-400 cursor-pointer p-1" title="Booking belum lunas" onclick="go('keuangan','piutang')">
+          <span id="bi"></span>
+          <span id="bn" class="absolute -top-0.5 -right-0.5 bg-red-500 text-white text-[10px] rounded-full min-w-[16px] h-4 grid place-items-center">0</span>
+        </div>
+
+        <div class="flex items-center gap-2.5">
+          <div id="av" class="w-8 h-8 rounded-full bg-slate-700 grid place-items-center text-sm uppercase"></div>
+          <div class="hidden sm:block leading-tight"><p id="un" class="text-sm"></p><p id="ur" class="text-xs text-slate-400"></p></div>
+        </div>
+      </header>
+
+      <div id="tamu" class="hidden bg-amber-500/10 text-amber-300 text-sm px-4 lg:px-6 py-2">
+        Mode tamu: data tidak disimpan dan hilang saat halaman ditutup.
+        <a class="underline cursor-pointer ml-1" onclick="bukaAuth()">Login / Daftar</a>
+      </div>
+
+      <section id="main" class="p-4 lg:p-6 max-w-[1400px]"></section>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
